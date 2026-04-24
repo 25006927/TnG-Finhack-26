@@ -11,7 +11,10 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
+  LogOut,
+  User,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -26,6 +29,7 @@ const navItems = [
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const { userProfile, logout } = useAuth();
 
   return (
     <aside
@@ -75,13 +79,44 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 border-t border-white/10 flex flex-col gap-4">
+        {/* User Profile & Sign Out */}
+        <div className={`flex ${collapsed ? 'flex-col items-center' : 'items-center justify-between'} gap-3`}>
+          {!collapsed && (
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 text-gray-300" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                  {userProfile?.companyName || 'SME User'}
+                </p>
+                <p className="text-xs text-gray-400 truncate">
+                  {userProfile?.email || 'user@example.com'}
+                </p>
+              </div>
+            </div>
+          )}
+          <button
+            onClick={logout}
+            className={`p-2 rounded-lg text-gray-400 hover:text-white hover:bg-red-500/20 hover:text-red-400 transition-colors ${
+              collapsed ? 'w-full flex justify-center' : ''
+            }`}
+            title="Sign Out"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* System Status */}
         {!collapsed && (
           <div className="text-xs text-gray-500">
-            <p>System Status</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-green-400">All Systems Operational</span>
+            <div className="flex items-center justify-between">
+              <p>System Status</p>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-green-400">Operational</span>
+              </div>
             </div>
           </div>
         )}
